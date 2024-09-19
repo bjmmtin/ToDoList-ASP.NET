@@ -1,0 +1,104 @@
+@model IEnumerable<ToDoApp.Models.Task>
+
+<div class="p-4">
+    <input type="text" id="new-task" placeholder="New task" />
+    <button onclick="addTask()">Add Task</button>
+</div>
+<div class=" d-flex ">
+    <div class="panel" id="todo">
+        <h2>To Do</h2>
+        <ul id="todo-list">
+            @foreach (var task in Model.Where(t => !t.State))
+            {
+                <li id="task_@task.Id" class="card" draggable="true" ondragstart="drag(event)">
+                    <div class="text-center">
+                        <input type="checkbox" data-id="@task.Id" />
+                        <span>@task.Id.</span>
+                        @task.TaskName
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteTask(@task.Id)">Delete</button>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class=" panel" id="done">
+        <h2>Done</h2>
+        <ul id="done-list">
+            @foreach (var task in Model.Where(t => t.State))
+            {
+                <li id="task_@task.Id" class="card" draggable="true" ondragstart="drag(event)">
+                    <div class="text-center">
+                        <input type="checkbox" data-id="@task.Id" value="@task.State" @(task.State ? "checked" : "") />
+                        <span>@task.Id.</span>
+                        @task.TaskName
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteTask(@task.Id)">Delete</button>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function addTask() {
+        var taskName = document.getElementById('new-task').value;
+        $.post('/Tasks/AddTask', { taskName: taskName }, function () {
+            location.reload();
+        });
+    }
+
+    function deleteTask(id) {
+        $.post('/Tasks/DeleteTask', { id: id }, function () {
+            location.reload();
+        });
+    }
+
+    $('#todo-list').on('change', 'input[type="checkbox"]', function () {
+        var taskId = $(this).data('id');
+        updateTask(taskId); // Mark task as completed or not completed
+    });
+
+    $('#done-list').on('change', 'input[type="checkbox"]', function () {
+        var taskId = $(this).data('id');
+        updateTask(taskId); // Mark task as completed or not completed
+    });
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.dataTransfer.setData("panel", ev.target.parentNode.id);
+    }
+    function handleDrop(ev, targetPanelId) {
+        ev.preventDefault();
+        const data = ev.originalEvent.dataTransfer.getData("text");
+        const sourcePanelId = ev.originalEvent.dataTransfer.getData("panel");
+        if (sourcePanelId === targetPanelId) {
+
+            return;
+        }
+        const taskId = data.split('_')[1];
+        updateTask(taskId); // Mark task as completed or not completed
+    }
+    $("#done").on("dragover", function (ev) {
+        ev.preventDefault();
+    });
+
+    $("#todo").on("dragover", function (ev) {
+        ev.preventDefault();
+    });
+
+    $("#done").on("drop", function (ev) {
+        handleDrop(ev, 'done-list');
+    });
+
+    $("#todo").on("drop", function (ev) {
+        handleDrop(ev, 'todo-list');
+    });
+
+    function updateTask(taskId) {
+        console.log(taskId)
+        $.post('/Tasks/ToggleTask', { id: taskId }, function () {
+            location.reload();
+        });
+    }
+</script>

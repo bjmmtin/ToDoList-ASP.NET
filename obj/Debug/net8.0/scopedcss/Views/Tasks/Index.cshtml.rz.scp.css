@@ -1,0 +1,24 @@
+.panel[b-0x2xbt7i5w] {
+    color: white;
+    width: 45%;
+    background-color: #102136;
+    border: 1px solid #140e0e;
+    border-radius: 8px;
+    min-width: 300px;
+    min-height: 100px;
+    margin: 0 10px;
+    padding: 0 15px;
+  }
+  .card[b-0x2xbt7i5w] {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    cursor: move;
+    background-color: #2b3452;
+    padding: 12px;
+    box-shadow: 1px 2px 2px -1px #4b6ddf;
+    margin: 25px 0;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 18px;
+  }
