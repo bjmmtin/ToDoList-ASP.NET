@@ -1,7 +1,7 @@
 # To-Do List Tutorial Project
 ## Description
 This is a ASP.NET project using the SQL Server database.
-
+This implements the drag-and-drop functionality from the To-Do list to the Done list.
 ## Getting Started
 
 1. Clone the repository:
